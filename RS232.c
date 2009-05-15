@@ -1,3 +1,4 @@
+//For serial communication
 #include "GPRS.h"
 
 void RS232_send()
