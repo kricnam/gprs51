@@ -1,7 +1,7 @@
 // STC12C5A60S2系列双串口1T 8051单片   
 #ifndef _STC12x5A60S2_H_
 #define _STC12x5A60S2_H_
-#include <complier.h>
+#include <compiler.h>
 //--------------------------------------------------------------------------------
 //内核特殊功能寄存器 C51 Core
 //                                            7     6      5       4     3    2    1     0   Reset Value
@@ -9,13 +9,13 @@ SFR( ACC  , 0xE0); //Accumulator                                                
 SFR( B    , 0xF0); //B Register                                                               0000,0000
 SFR( PSW  , 0xD0); //Program Status Word      CY    AC    F0    RS1   RS0    OV    F1    P    0000,0000
 //-----------------------------------
-SBIT( CY  , PSW,7);
-SBIT( AC  , PSW,6);
-SBIT( F0  , PSW,5);
-SBIT( RS1 , PSW,4);
-SBIT( RS0 , PSW,3);
-SBIT( OV  , PSW,2);
-SBIT( P   , PSW,0);
+SBIT( CY  , 0xD0,7);
+SBIT( AC  , 0xD0,6);
+SBIT( F0  , 0xD0,5);
+SBIT( RS1 , 0xD0,4);
+SBIT( RS0 , 0xD0,3);
+SBIT( OV  , 0xD0,2);
+SBIT( P   , 0xD0,0);
 //-----------------------------------
 SFR( SP   , 0x81); //Stack Pointer                                                            0000,0111
 SFR( DPL  , 0x82); //Data Pointer Low Byte                                                    0000,0000
@@ -97,28 +97,28 @@ RWS2,RWS1,RWS0:
 //                                           7     6     5    4     3    2    1    0   Reset Value
 SFR( IE      , 0xA8);  //中断控制寄存器        EA  ELVD  EADC   ES   ET1  EX1  ET0  EX0  0x00,0000
 //-----------------------
-SBIT( EA       , IE,7);
-SBIT( ELVD     , IE,6); //低压监测中断允许位
-SBIT( EADC     , IE,5); //ADC 中断允许位
-SBIT( ES       , IE,4);
-SBIT( ET1      , IE,3);
-SBIT( EX1      , IE,2);
-SBIT( ET0      , IE,1);
-SBIT( EX0      , IE,0);
+SBIT( EA       , 0xA8,7);
+SBIT( ELVD     , 0xA8,6); //低压监测中断允许位
+SBIT( EADC     , 0xA8,5); //ADC 中断允许位
+SBIT( ES       , 0xA8,4);
+SBIT( ET1      , 0xA8,3);
+SBIT( EX1      , 0xA8,2);
+SBIT( ET0      , 0xA8,1);
+SBIT( EX0      , 0xA8,0);
 //-----------------------
 SFR( IE2       , 0xAF);  //Auxiliary Interrupt   -     -     -    -     -    -  ESPI  ES2  0000,0000B
 //-----------------------
 //                                          7     6     5    4    3    2    1    0    Reset Value
 SFR( IP      , 0xB8); //中断优先级低位      PPCA  PLVD  PADC  PS   PT1  PX1  PT0  PX0   0000,0000
 //--------
-SBIT( PPCA     , IP,7);  //PCA 模块中断优先级
-SBIT( PLVD     , IP,6);  //低压监测中断优先级
-SBIT( PADC     , IP,5);  //ADC 中断优先级
-SBIT( PS       , IP,4);
-SBIT( PT1      , IP,3);
-SBIT( PX1      , IP,2);
-SBIT( PT0      , IP,1);
-SBIT( PX0      , IP,0);
+SBIT( PPCA     , 0xA8,7);  //PCA 模块中断优先级
+SBIT( PLVD     , 0xA8,6);  //低压监测中断优先级
+SBIT( PADC     , 0xA8,5);  //ADC 中断优先级
+SBIT( PS       , 0xA8,4);
+SBIT( PT1      , 0xA8,3);
+SBIT( PX1      , 0xA8,2);
+SBIT( PT0      , 0xA8,1);
+SBIT( PX0      , 0xA8,0);
 //-----------------------
 //                                         7      6      5     4     3     2     1     0    Reset Value
 SFR( IPH   , 0xB7); //中断优先级高位       PPCAH  PLVDH  PADCH  PSH  PT1H  PX1H  PT0H  PX0H   0000,0000
@@ -164,14 +164,14 @@ SFR( P5M1 , 0xC9); //                                                           
 //                                          7     6     5     4     3     2     1     0     Reset Value
 SFR( TCON , 0x88); //T0/T1 Control           TF1   TR1   TF0   TR0   IE1   IT1   IE0   IT0    0000,0000
 //-----------------------------------
-SBIT( TF1 , TCON,7);
-SBIT( TR1 , TCON,6);
-SBIT( TF0 , TCON,5);
-SBIT( TR0 , TCON,4);
-SBIT( IE1 , TCON,3);
-SBIT( IT1 , TCON,2);
-SBIT( IE0 , TCON,1);
-SBIT( IT0 , TCON,0);
+SBIT( TF1 , 0x88,7);
+SBIT( TR1 , 0x88,6);
+SBIT( TF0 , 0x88,5);
+SBIT( TR0 , 0x88,4);
+SBIT( IE1 , 0x88,3);
+SBIT( IT1 , 0x88,2);
+SBIT( IE0 , 0x88,1);
+SBIT( IT0 , 0x88,0);
 //-----------------------------------
 SFR( TMOD , 0x89); //T0/T1 Modes             GATE1 C/T1  M1_1  M1_0  GATE0 C/T0  M0_1  M0_0   0000,0000
 SFR( TL0  , 0x8A); //T0 Low Byte                                                              0000,0000
@@ -183,14 +183,14 @@ SFR( TH1  , 0x8D); //T1 High Byte                                               
 //                                          7     6     5     4     3     2     1     0     Reset Value
 SFR( SCON , 0x98); //Serial Control         SM0/FE SM1   SM2   REN   TB8   RB8    TI    RI    0000,0000
 //-----------------------------------
-SBIT( SM0 , SCON,7);  //SM0/FE
-SBIT( SM1 , SCON,6);
-SBIT( SM2 , SCON,5);
-SBIT( REN , SCON,4);
-SBIT( TB8 , SCON,3);
-SBIT( RB8 , SCON,2);
-SBIT( TI  , SCON,1);
-SBIT( RI  , SCON,0);
+SBIT( SM0 , 0x98,7);  //SM0/FE
+SBIT( SM1 , 0x98,6);
+SBIT( SM2 , 0x98,5);
+SBIT( REN , 0x98,4);
+SBIT( TB8 , 0x98,3);
+SBIT( RB8 , 0x98,2);
+SBIT( TI  , 0x98,1);
+SBIT( RI  , 0x98,0);
 //-----------------------------------
 SFR( SBUF , 0x99); //Serial Data Buffer                                                     xxxx,xxxx
 SFR( SADEN , 0xB9); //Slave Address Mask                                                    0000,0000
@@ -212,12 +212,12 @@ SFR( WDT_CONTR , 0xC1); //Watch-Dog-Timer Control register
 //                                         7     6     5     4     3     2     1     0     Reset Value
 SFR( CCON   , 0xD8);   //PCA 控制寄存器。    CF    CR    -     -     -     -    CCF1  CCF0   00xx,xx00
 //-----------------------
-SBIT( CF     , CCON,7); //PCA计数器溢出标志,由硬件或软件置位,必须由软件清0。
-SBIT( CR     , CCON,6); //1:允许 PCA 计数器计数, 必须由软件清0。
+SBIT( CF     , 0xD8,7); //PCA计数器溢出标志,由硬件或软件置位,必须由软件清0。
+SBIT( CR     , 0xD8,6); //1:允许 PCA 计数器计数, 必须由软件清0。
 //-
 //-
-SBIT( CCF1   , CCON,1); //PCA 模块1 中断标志, 由硬件置位, 必须由软件清0。
-SBIT( CCF0   , CCON,0); //PCA 模块0 中断标志, 由硬件置位, 必须由软件清0。
+SBIT( CCF1   , 0xD8,1); //PCA 模块1 中断标志, 由硬件置位, 必须由软件清0。
+SBIT( CCF0   , 0xD8,0); //PCA 模块0 中断标志, 由硬件置位, 必须由软件清0。
 //-----------------------
 SFR( CMOD  , 0xD9); //PCA 工作模式寄存器。   CIDL   -     -     -   CPS2   CPS1  CPS0  ECF   0xxx,x000
 /*
