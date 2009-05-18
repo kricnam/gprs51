@@ -1,11 +1,9 @@
-#include <complier.h>
+// STC12C5A60S2系列双串口1T 8051单片   
 #ifndef _STC12x5A60S2_H_
 #define _STC12x5A60S2_H_
+#include <complier.h>
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机内核特殊功能寄存器 C51 Core
-// 
-// STC12C5A60S2系列双串口1T 8051单片   
-//
+//内核特殊功能寄存器 C51 Core
 //                                            7     6      5       4     3    2    1     0   Reset Value
 SFR( ACC  , 0xE0); //Accumulator                                                              0000,0000
 SFR( B    , 0xF0); //B Register                                                               0000,0000
@@ -23,7 +21,7 @@ SFR( SP   , 0x81); //Stack Pointer                                              
 SFR( DPL  , 0x82); //Data Pointer Low Byte                                                    0000,0000
 SFR( DPH  , 0x83); //Data Pointer High Byte                                                   0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机系统管理特殊功能寄存器
+//系统管理特殊功能寄存器
 // System management special function registor
 //                                            7     6      5    4     3      2    1     0     Reset Value
 SFR( PCON   , 0x87); //Power Control        SMOD  SMOD0  LVDF  POF   GF1    GF0   PD   IDL    0001,0000
@@ -93,9 +91,9 @@ RWS2,RWS1,RWS0:
   111 : The MOVX read/write pulse is 8 clock cycles.
 */
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机中断特殊功能寄存器
+//中断特殊功能寄存器
 //有的中断控制、中断标志位散布在其它特殊功能寄存器中，这些位在位地址中定义
-//其中有的位无位寻址能力，请参阅 新一代 1T 8051系列 单片机中文指南
+//其中有的位无位寻址能力，请参阅 中文指南
 //                                           7     6     5    4     3    2    1    0   Reset Value
 SFR( IE      , 0xA8);  //中断控制寄存器        EA  ELVD  EADC   ES   ET1  EX1  ET0  EX0  0x00,0000
 //-----------------------
@@ -127,12 +125,22 @@ SFR( IPH   , 0xB7); //中断优先级高位       PPCAH  PLVDH  PADCH  PSH  PT1H
 SFR( IP2   , 0xB5); //                       -      -      -     -     -     -   PSPI   PS2   xxxx,xx00
 SFR( IPH2  , 0xB6); //                       -      -      -     -     -     -   PSPIH  PS2H  xxxx,xx00
 //-----------------------
-//新一代 1T 8051系列 单片机I/O 口特殊功能寄存器
+//I/O 口特殊功能寄存器
 //                                      7     6     5     4     3     2     1     0         Reset Value
 SFR( P0   , 0x80); //8 bitPort0          P0.7  P0.6  P0.5  P0.4  P0.3  P0.2  P0.1  P0.0       1111,1111
 SFR( P0M0 , 0x94); //                                                                         0000,0000
 SFR( P0M1 , 0x93); //                                                                         0000,0000
 SFR( P1   , 0x90); //8 bitPort1          P1.7  P1.6  P1.5  P1.4  P1.3  P1.2  P1.1  P1.0       1111,1111
+
+   SBIT(P1_0, 0x90, 0); // Port 1 bit 0
+   SBIT(P1_1, 0x90, 1); // Port 1 bit 1
+   SBIT(P1_2, 0x90, 2); // Port 1 bit 2
+   SBIT(P1_3, 0x90, 3); // Port 1 bit 3
+   SBIT(P1_4, 0x90, 4); // Port 1 bit 4
+   SBIT(P1_5, 0x90, 5); // Port 1 bit 5
+   SBIT(P1_6, 0x90, 6); // Port 1 bit 6
+   SBIT(P1_7, 0x90, 7); // Port 1 bit 7
+
 SFR( P1M0 , 0x92); //                                                                         0000,0000
 SFR( P1M1 , 0x91); //                                                                         0000,0000
 SFR( P1ASF , 0x9D); //P1 analog special function
@@ -152,7 +160,7 @@ SFR( P5   , 0xC8); //8 bitPort5           -     -       -      -    P5.3  P5.2  
 SFR( P5M0 , 0xCA); //                                                                         0000,0000
 SFR( P5M1 , 0xC9); //                                                                         0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机定时器特殊功能寄存器
+//定时器特殊功能寄存器
 //                                          7     6     5     4     3     2     1     0     Reset Value
 SFR( TCON , 0x88); //T0/T1 Control           TF1   TR1   TF0   TR0   IE1   IT1   IE0   IT0    0000,0000
 //-----------------------------------
@@ -171,7 +179,7 @@ SFR( TH0  , 0x8C); //T0 High Byte                                               
 SFR( TL1  , 0x8B); //T1 Low Byte                                                              0000,0000
 SFR( TH1  , 0x8D); //T1 High Byte                                                             0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机串行口特殊功能寄存器
+//串行口特殊功能寄存器
 //                                          7     6     5     4     3     2     1     0     Reset Value
 SFR( SCON , 0x98); //Serial Control         SM0/FE SM1   SM2   REN   TB8   RB8    TI    RI    0000,0000
 //-----------------------------------
@@ -191,16 +199,16 @@ SFR( SADDR , 0xA9); //Slave Address                                             
 //                                7      6      5      4      3      2     1     0        Reset Value
 SFR( S2CON , 0x9A); //S2 Control  S2SM0  S2SM1  S2SM2  S2REN  S2TB8  S2RB8  S2TI  S2RI      00000000B
 SFR( S2BUF , 0x9B); //S2 Serial Buffer                                                      xxxx,xxxx
-SFR( BRT , 0x9C); //S2 Baud-Rate Timer                                                    0000,0000
+SFR( BRT , 0x9C);   //S2 Baud-Rate Timer                                                    0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机看门狗定时器特殊功能寄存器
+//看门狗定时器特殊功能寄存器
 SFR( WDT_CONTR , 0xC1); //Watch-Dog-Timer Control register
 //                                      7     6     5      4       3      2   1   0     Reset Value
 //                                  WDT_FLAG  -  EN_WDT CLR_WDT IDLE_WDT PS2 PS1 PS0    xx00,0000
 //-----------------------
 
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机PCA/PWM 特殊功能寄存器
+//PCA/PWM 特殊功能寄存器
 //                                         7     6     5     4     3     2     1     0     Reset Value
 SFR( CCON   , 0xD8);   //PCA 控制寄存器。    CF    CR    -     -     -     -    CCF1  CCF0   00xx,xx00
 //-----------------------
@@ -277,19 +285,19 @@ SFR( PCA_PWM1 , 0xF3); //PCA 模块1 PWM 寄存器。            -   -   -   -  
 //B1(EPCnH): 在 PWM 模式下，与 CCAPnH 组成 9 位数。
 //B0(EPCnL): 在 PWM 模式下，与 CCAPnL 组成 9 位数。
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机 ADC 特殊功能寄存器
+// ADC 特殊功能寄存器
 //                                            7        6      5       4         3      2    1    0   Reset Value
 SFR( ADC_CONTR , 0xBC); //A/D 转换控制寄存器 ADC_POWER SPEED1 SPEED0 ADC_FLAG ADC_START CHS2 CHS1 CHS0 0000,0000
 SFR( ADC_RES  , 0xBD);  //A/D 转换结果高8位 ADCV.9 ADCV.8 ADCV.7 ADCV.6 ADCV.5 ADCV.4 ADCV.3 ADCV.2	 0000,0000
 SFR( ADC_RESL , 0xBE);  //A/D 转换结果低2位                                           ADCV.1 ADCV.0	 0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机 SPI 特殊功能寄存器
+// SPI 特殊功能寄存器
 //                                      7     6     5     4     3     2     1     0    Reset Value
 SFR( SPCTL  , 0xCE); //SPI Control Register  SSIG  SPEN  DORD  MSTR  CPOL  CPHA  SPR1  SPR0  0000,0100
 SFR( SPSTAT , 0xCD); //SPI Status Register   SPIF  WCOL   -     -     -     -     -     -    00xx,xxxx
 SFR( SPDAT  , 0xCF); //SPI Data Register                                                     0000,0000
 //--------------------------------------------------------------------------------
-//新一代 1T 8051系列 单片机 IAP/ISP 特殊功能寄存器
+// IAP/ISP 特殊功能寄存器
 SFR( IAP_DATA    , 0xC2);
 SFR( IAP_ADDRH   , 0xC3);
 SFR( IAP_ADDRL   , 0xC4);
