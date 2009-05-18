@@ -1,4 +1,4 @@
-#ifdef _GPRS51_H_
+#ifndef _GPRS51_H_
 #define  _GPRS51_H_
 #include "STC12x5A60S2.h"
 #define FSCK 11059200   //11.058200MHz Cyrstal
