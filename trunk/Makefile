@@ -8,7 +8,7 @@ all:	$(MAIN).ihx
 	makebin -p < $(MAIN).ihx > $(MAIN).bin
 gprs51.ihx:	$(MAIN).c $(OBJS)
 	sdcc  $^
-%.rel:	%.c
+%.rel:	%.c %.h
 	sdcc -c $<
 clean:
 	echo $(SOURCE)
