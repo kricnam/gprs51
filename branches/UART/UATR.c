@@ -2,7 +2,7 @@
 #include "gprs_board.h"
 //Set COM1 
 //
-void UATR_init()
+void UATR_init(void)
 {
 	SCON = 0x50;//SMODE=2
 	BRT = RELOAD;
