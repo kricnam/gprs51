@@ -42,12 +42,23 @@ void UATR1_isend(unsigned char i)
 	}
 }
 
+void UATR1_sendString(unsigned char* str)
+{
+	while(*str)
+	{
+		UATR1_isend(*str);
+		str++;
+	}
+}
+
 unsigned char UATR1_get(void)
 {
 	if (gRxIn == gRxOut) return 0;
 	gRxOut++;
 	return gRxBuf[(gRxOut-1)& 0x0F];
 }
+
+
 
 void UATR1_ISR(void) __interrupt (4)
 {
