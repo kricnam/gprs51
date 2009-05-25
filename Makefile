@@ -6,6 +6,7 @@ OBJS = $(patsubst %c,%rel,$(SOURCE))
 
 all:	$(MAIN).ihx	
 	makebin -p < $(MAIN).ihx > $(MAIN).bin
+	packihx < $(MAIN).ihx > $(MAIN).hex
 gprs51.ihx:	$(MAIN).c $(OBJS)
 	sdcc  $^
 %.rel:	%.c %.h

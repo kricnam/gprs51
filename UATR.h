@@ -1,17 +1,20 @@
 #ifndef _UATR_H_
 #define _UATR_H_
 
-__idata unsigned char gTxLen;
-__idata unsigned char gRxBuf[16];
-__idata unsigned char* iTxBuf;
-__data unsigned char gRxIn;
-__data unsigned char gRxOut;
-__data unsigned char gTxLen;
+__idata volatile unsigned char  gRxBuf[16];
+__idata volatile unsigned char  gTxBuf[16];
+__data volatile unsigned char gRxIn;
+__data volatile unsigned char gRxOut;
+__data volatile unsigned char gTxIn;
+__data volatile unsigned char gTxOut;
 
-bit bSENDING;
-bit bRxOverflow;
+volatile bit bSENDING;
+volatile bit bRxOverflow;
 
 void UATR1_init(void);
 void UATR1_send(unsigned char i);
+void UATR1_isend(unsigned char i);
+unsigned char UATR1_get(void);
+
 
 #endif
