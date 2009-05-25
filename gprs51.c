@@ -1,6 +1,6 @@
 #include "gprs_board.h"
 #include "UATR.h"
-void UATR1_ISR(void) __interrupt (4);
+
 void TimeDelay(int Time)
 {
 	int i;
