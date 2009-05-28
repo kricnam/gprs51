@@ -145,15 +145,42 @@ SFR( P1M0 , 0x92); //                                                           
 SFR( P1M1 , 0x91); //                                                                         0000,0000
 SFR( P1ASF , 0x9D); //P1 analog special function
 SFR( P2   , 0xA0); //8 bitPort2          P2.7  P2.6  P2.5  P2.4  P2.3  P2.2  P2.1  P2.0       1111,1111
+   SBIT(P2_0, 0xA0, 0); // Port 2 bit 0
+   SBIT(P2_1, 0xA0, 1); // Port 2 bit 1
+   SBIT(P2_2, 0xA0, 2); // Port 2 bit 2
+   SBIT(P2_3, 0xA0, 3); // Port 2 bit 3
+   SBIT(P2_4, 0xA0, 4); // Port 2 bit 4
+   SBIT(P2_5, 0xA0, 5); // Port 2 bit 5
+   SBIT(P2_6, 0xA0, 6); // Port 2 bit 6
+   SBIT(P2_7, 0xA0, 7); // Port 2 bit 7
+
+
 SFR( P2M0 , 0x96); //                                                                         0000,0000
 SFR( P2M1 , 0x95); //                                                                         0000,0000
 SFR( P3   , 0xB0); //8 bitPort3          P3.7  P3.6  P3.5  P3.4  P3.3  P3.2  P3.1  P3.0       1111,1111
+   SBIT(P3_0, 0xB0, 0); // Port 3 bit 0
+   SBIT(P3_1, 0xB0, 1); // Port 3 bit 1
+   SBIT(P3_2, 0xB0, 2); // Port 3 bit 2
+   SBIT(P3_3, 0xB0, 3); // Port 3 bit 3
+   SBIT(P3_4, 0xB0, 4); // Port 3 bit 4
+   SBIT(P3_5, 0xB0, 5); // Port 3 bit 5
+   SBIT(P3_6, 0xB0, 6); // Port 3 bit 6
+   SBIT(P3_7, 0xB0, 7); // Port 3 bit 7
 SFR( P3M0 , 0xB2); //                                                                         0000,0000
 SFR( P3M1 , 0xB1); //                                                                         0000,0000
+
 SFR( P4   , 0xC0); //8 bitPort4          P4.7  P4.6  P4.5  P4.4  P4.3  P4.2  P4.1  P4.0       1111,1111
+   SBIT(P4_0, 0xC0, 0); // Port 4 bit 0
+   SBIT(P4_1, 0xC0, 1); // Port 4 bit 1
+   SBIT(P4_2, 0xC0, 2); // Port 4 bit 2
+   SBIT(P4_3, 0xC0, 3); // Port 4 bit 3
+   SBIT(P4_4, 0xC0, 4); // Port 4 bit 4
+   SBIT(P4_5, 0xC0, 5); // Port 4 bit 5
+   SBIT(P4_6, 0xC0, 6); // Port 4 bit 6
+   SBIT(P4_7, 0xC0, 7); // Port 4 bit 7
 SFR( P4M0 , 0xB4); //                                                                         0000,0000
 SFR( P4M1 , 0xB3); //                                                                         0000,0000
-//                                      7      6         5         4      3     2     1     0     Reset Value
+    //                                      7      6         5         4      3     2     1     0     Reset Value
 SFR( P4SW , 0xBB); //Port-4 switch	    -   LVD_P4.6  ALE_P4.5  NA_P4.4   -     -     -     -	    x000,xxxx
 
 SFR( P5   , 0xC8); //8 bitPort5           -     -       -      -    P5.3  P5.2  P5.1  P5.0    xxxx,1111

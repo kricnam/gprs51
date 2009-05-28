@@ -17,7 +17,7 @@ void TimeDelay(int Time)
 }
 void wait(void)
 {
-	PCON =  0x01;
+	PCON |= 0x01;
 	_asm
 	nop
 	nop
@@ -28,31 +28,48 @@ void wait(void)
 
 void main(void)
 {
-    __code unsigned char* hello="Hello World\r\n";
-    int i;
+    __code unsigned char* hello="\r\nSystem Start...\r\n";
+    __code unsigned char* msg="\r\nGPRS Power On";
+    bit bIO10High;
+    unsigned char n;
     RUN_LED = 0;
-    TimeDelay(100);
+    TimeDelay(10);
     RUN_LED = 1;
-    TimeDelay(100);
+    TimeDelay(20);
     RUN_LED = 0;
     UATR1_init();
-    for( i=0;i<512;i++)
-    {
-	XMem[i]= 'A';
-    }  
-    for (i=0;i<512;i++)
-	UATR1_send(XMem[i]);
-    UATR1_isend('O');
-    UATR1_isend('K');
-    UATR1_isend('\r');
-    UATR1_isend('\n');
     UATR1_sendString(hello);
+
+    P4_3 = 0;
+    P4_2 = 0;
+    P3M1 |= 0x08;
+    P4SW |= 0x10;
+    P2M0 |= 0x80;
+    if (P3_3)    UATR1_sendString(hello);
+    //Power GPRS Module
+    P1_1 = 0;
+    TimeDelay(100);
+    P1_1 = 1;
+    //Check
+    bIO10High = 0;
+    n =0;
+    while(!bIO10High)
+    {
+        if (!P3_3) n++;
+	if (n > 4) bIO10High = 1;
+
+    }
+
+    UATR1_sendString(msg);
+    
+    while(!P3_3){};
+    UATR1_sendString(msg); 
     
     while(1)
     {
-	unsigned char i;
-	i=UATR1_get();
-	if (i) UATR1_isend(i);
-	else wait();
+	P4_4 = 0;
+	TimeDelay(5);
+	P4_4 = 1;
+	TimeDelay(5);
     };
 }
