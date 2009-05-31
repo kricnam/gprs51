@@ -1,6 +1,6 @@
 #include "gprs_board.h"
 #include "UATR.h"
-
+#include "wait.h"
 __xdata unsigned char XMem[512];
 
 void TimeDelay(int Time)
@@ -15,29 +15,21 @@ void TimeDelay(int Time)
 		Time --;
 	}
 }
-void wait(void)
-{
-	PCON |= 0x01;
-	_asm
-	nop
-	nop
-	nop
-	nop
-	_endasm;
-}
 
 void main(void)
 {
     __code unsigned char* hello="\r\nSystem Start...\r\n";
     __code unsigned char* msg="\r\nGPRS Power On";
+    __code unsigned char* ATCMD="AT\n";
     bit bIO10High;
     unsigned char n;
+
     RUN_LED = 0;
     TimeDelay(10);
     RUN_LED = 1;
     TimeDelay(20);
     RUN_LED = 0;
-    UATR1_init();
+    UATR_init();
     UATR1_sendString(hello);
 
     P4_3 = 0;
@@ -65,11 +57,18 @@ void main(void)
     while(!P3_3){};
     UATR1_sendString(msg); 
     
+    //UATR2_sendString(ATCMD);
+	//n = UATR2_get();
+	//if (n) UATR1_send(n);
     while(1)
     {
-	P4_4 = 0;
-	TimeDelay(5);
-	P4_4 = 1;
-	TimeDelay(5);
+	n = UATR1_get();
+	if (n) 
+	{
+		UATR1_send(n);
+		UATR2_send(n);	
+	}
+	UATR1_sendString(ATCMD);
+	wait();
     };
 }

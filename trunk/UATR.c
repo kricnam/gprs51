@@ -4,26 +4,47 @@
 //Set COM1 
 
 __idata volatile unsigned char  gRx1Buf[16];
+__idata volatile unsigned char  gRx2Buf[16];
 __data volatile unsigned char gRx1In;
+__data volatile unsigned char gRx2In;
 __data volatile unsigned char gRx1Out;
-volatile bit bRx1Full;
-volatile unsigned char * gTx1Ptr;
-volatile unsigned int gTx1Len;
+__data volatile unsigned char gRx2Out;
 
-void UATR1_init()
+volatile bit bRx1Full;
+volatile bit bRx2Full;
+volatile unsigned char * gTx1Ptr;
+volatile unsigned char * gTx2Ptr;
+volatile unsigned int gTx1Len;
+volatile unsigned int gTx2Len;
+
+void UATR_init()
 {
-	SCON = 0x50;//SMODE=2
-        PCON|= 0x80;//波特率倍增,SMOD='1'
-	BRT = RELOAD;
-	AUXR = 0x15;
 	gRx1In = 0;
 	gRx1Out = 0;
 	gTx1Ptr = 0;
 	bRx1Overflow=0;
 	bRx1Full=0;
+
+        gRx2In = 0;
+        gRx2Out = 0;
+        gTx2Ptr = 0;
+        bRx2Overflow=0;
+        bRx2Full=0;
+
+	SCON = 0x50;//SMODE=2
+	TMOD = 0x21;
+	TH1  = RELOAD;
+	TL1  = RELOAD;
+	S2CON = 0x50;//SMODE=2
+        PCON|= 0x80;//波特率倍增,SMOD='1'
+	BRT = RELOAD;
+	AUXR = 0x58;//BRTR=1;S2SMOD=1;BRx12=1;
+	TR1 = 1;
 	ES = 1;
+	IE2 = 0x01; //enable UATR 2 imterupt
 	EA = 1; 
 }
+
 
 void UATR1_send(unsigned char i)
 {
@@ -33,6 +54,14 @@ void UATR1_send(unsigned char i)
 	TI = 1;
 }
 
+void UATR2_send(unsigned char i)
+{
+        while (gTx2Ptr) {};
+        gTx2Ptr = &i;
+        gTx2Len = 1;
+        S2CON |= 0x01;
+}
+
 void UATR1_sendString(unsigned char* str)
 {
 	while(gTx1Ptr) {};
@@ -40,11 +69,25 @@ void UATR1_sendString(unsigned char* str)
 	TI = 1;
 }
 
+void UATR2_sendString(unsigned char* str)
+{
+        while(gTx2Ptr) {};
+        gTx2Ptr = str;
+        S2CON |= 0x01;
+}
+
 unsigned char UATR1_get(void)
 {
 	if (gRx1In == gRx1Out) return 0;
 	gRx1Out++;
 	return gRx1Buf[(gRx1Out-1)& 0x0F];
+}
+
+unsigned char UATR2_get(void)
+{
+        if (gRx2In == gRx2Out) return 0;
+        gRx2Out++;
+        return gRx2Buf[(gRx2Out-1)& 0x0F];
 }
 
 
@@ -83,3 +126,40 @@ void UATR1_ISR(void) __interrupt (4)
 	}
 	ES = 1;
 }
+
+void UATR2_ISR(void) __interrupt (8)
+{
+
+        unsigned char i;
+        IE2 &= 0xFE;
+        if (S2CON & 0x01)
+        {
+                S2CON &= 0xFE;
+                i = S2BUF;
+                bRx2Overflow |= (bRx2Full && gRx2In==gRx2Out)?1:0;
+                gRx2Buf[gRx2In & 0x0F] = i;
+                gRx2In++;
+                bRx2Full = (gRx2In==gRx2Out)?1:0;
+        }
+        if (S2CON& 0x02)
+        {
+                S2CON &= 0xFD;
+                if (gTx2Ptr && (*gTx2Ptr || gTx2Len) )
+                {
+                   S2BUF = *gTx2Ptr;
+                   gTx2Ptr++;
+                   if (gTx2Len)
+                   {
+                        gTx2Len--;
+                        if (gTx2Len==0) gTx2Ptr=0;
+                   }
+                }
+                else
+                {
+                        gTx2Ptr = 0;
+                        gTx2Len = 0;
+                }
+        }
+        IE2 |= 0x01;
+}
+
