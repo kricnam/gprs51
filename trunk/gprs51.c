@@ -16,11 +16,31 @@ void TimeDelay(int Time)
 	}
 }
 
+void flash_LED()
+{
+	RUN_LED = !RUN_LED;
+	TimeDelay(20);
+	RUN_LED = !RUN_LED;
+	TimeDelay(20);
+}
+
+void LED_ON()
+{
+	RUN_LED = 1;
+	TimeDelay(20);
+}
+
+void LED_OFF()
+{
+        RUN_LED = 0;
+        TimeDelay(20);
+}
+
 void main(void)
 {
     __code unsigned char* hello="\r\nSystem Start...\r\n";
     __code unsigned char* msg="\r\nGPRS Power On";
-    __code unsigned char* ATCMD="AT\n";
+    __code unsigned char* ATCMD="AT\r\n";
     bit bIO10High;
     unsigned char n;
 
@@ -62,13 +82,19 @@ void main(void)
 	//if (n) UATR1_send(n);
     while(1)
     {
+	LED_ON();
 	n = UATR1_get();
+	LED_OFF();
 	if (n) 
 	{
+	LED_ON();
 		UATR1_send(n);
+	LED_OFF();
+        LED_ON();
+	LED_ON();
 		UATR2_send(n);	
+	LED_OFF();
 	}
-	UATR1_sendString(ATCMD);
-	wait();
+	//UATR1_sendString(ATCMD);
     };
 }
