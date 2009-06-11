@@ -9,6 +9,14 @@ __data volatile unsigned char gRx1In;
 __data volatile unsigned char gRx2In;
 __data volatile unsigned char gRx1Out;
 __data volatile unsigned char gRx2Out;
+__xdata volatile unsigned char gTx1[16];
+__xdata volatile unsigned char gTx2[16];
+__data volatile unsigned char gTx1In;
+__data volatile unsigned char gTx2In;
+__data volatile unsigned char gTx1Out;
+__data volatile unsigned char gTx2Out;
+
+
 
 volatile bit bRx1Full;
 volatile bit bRx2Full;
@@ -17,16 +25,23 @@ volatile unsigned char * gTx2Ptr;
 volatile unsigned int gTx1Len;
 volatile unsigned int gTx2Len;
 
+
 void UATR_init()
 {
 	gRx1In = 0;
 	gRx1Out = 0;
+        gTx1In = 0;
+        gTx1Out = 0;
+ 
 	gTx1Ptr = 0;
 	bRx1Overflow=0;
 	bRx1Full=0;
 
         gRx2In = 0;
         gRx2Out = 0;
+        gTx2In = 0;
+        gTx2Out = 0;
+ 
         gTx2Ptr = 0;
         bRx2Overflow=0;
         bRx2Full=0;
@@ -38,7 +53,8 @@ void UATR_init()
 	S2CON = 0x50;//SMODE=2
         PCON|= 0x80;//波特率倍增,SMOD='1'
 	BRT = RELOAD;
-	AUXR = 0x58;//BRTR=1;S2SMOD=1;BRx12=1;
+
+	AUXR = 0x18;//BRTR=1;S2SMOD=1;BRx12=1;
 	TR1 = 1;
 	ES = 1;
 	IE2 = 0x01; //enable UATR 2 imterupt
@@ -49,24 +65,30 @@ void UATR_init()
 void UATR1_send(unsigned char i)
 {
 	while (gTx1Ptr) {};
-	gTx1Ptr = &i;
-	gTx1Len = 1;
-	TI = 1;
+	while (((gTx1In+1)&0x0F)==(gTx1Out&0x0F)); 
+	
+	gTx1[(gTx1In&0x0F)]=i;
+	gTx1In++;
+	gTx1Len = 0;
+	if ((gTx1In-1)==gTx1Out) TI = 1;
 }
 
 void UATR2_send(unsigned char i)
 {
         while (gTx2Ptr) {};
-        gTx2Ptr = &i;
         gTx2Len = 1;
+	gTx2[0] = i;
         S2CON |= 0x01;
 }
 
 void UATR1_sendString(unsigned char* str)
 {
+	unsigned int i=0;
 	while(gTx1Ptr) {};
+	while(str[i++]); 
 	gTx1Ptr = str;
-	TI = 1;
+	gTx1Len = i;
+	if ((gTx1In-1)==gTx1Out) TI = 1;
 }
 
 void UATR2_sendString(unsigned char* str)
@@ -95,6 +117,7 @@ void UATR1_ISR(void) __interrupt (4)
 {
 
 	unsigned char i;
+	char n=16;
 	ES = 0;
 	if (RI)
 	{
@@ -108,21 +131,25 @@ void UATR1_ISR(void) __interrupt (4)
 	if (TI)
 	{
 		TI = 0;
-		if (gTx1Ptr && (*gTx1Ptr || gTx1Len) )
+		if (gTx1In == gTx1Out)
 		{
-		   SBUF = *gTx1Ptr; 
-		   gTx1Ptr++;
-		   if (gTx1Len) 
-		   {
-			gTx1Len--;
-			if (gTx1Len==0) gTx1Ptr=0;
-		   }
+			//load buffer
+			while (n && gTx1Len) 
+			{
+				gTx1[gTx1In & 0x0F]=*gTx1Ptr;
+		   		gTx1Len--;
+				gTx1Ptr++;
+				gTx1In++;
+				n--;
+			};
+			if (gTx1Len==0) gTx1Ptr = 0;
 		}
-		else
+		if (gTx1In != gTx1Out)
 		{
-			gTx1Ptr = 0;
-			gTx1Len = 0;
+			SBUF = gTx1[gTx1Out & 0x0F]; 
+			gTx1Out++;
 		}
+		
 	}
 	ES = 1;
 }

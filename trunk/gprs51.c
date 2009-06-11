@@ -27,13 +27,37 @@ void flash_LED()
 void LED_ON()
 {
 	RUN_LED = 1;
-	TimeDelay(20);
+	TimeDelay(1);
 }
 
 void LED_OFF()
 {
         RUN_LED = 0;
-        TimeDelay(20);
+        TimeDelay(1);
+}
+
+void GPRS_ON()
+{
+    int n;
+    bit bIO10High;
+    if (P3_3)    UATR1_sendString("Power On GPRS\r\n");
+    //Power GPRS Module
+    P1_1 = 0;
+    TimeDelay(100);
+    P1_1 = 1;
+    //Check, waiting response plus
+    bIO10High = 0;
+    n =0;
+    while(!bIO10High)
+    {
+        if (!P3_3) n++;
+        if (n > 4) bIO10High = 1;
+
+    }
+    //UATR1_sendString(msg);
+    
+    while(!P3_3){};
+    //UATR1_sendString(msg); 
 }
 
 void main(void)
@@ -41,7 +65,6 @@ void main(void)
     __code unsigned char* hello="\r\nSystem Start...\r\n";
     __code unsigned char* msg="\r\nGPRS Power On";
     __code unsigned char* ATCMD="AT\r\n";
-    bit bIO10High;
     unsigned char n;
 
     RUN_LED = 0;
@@ -50,6 +73,8 @@ void main(void)
     TimeDelay(20);
     RUN_LED = 0;
     UATR_init();
+
+    UATR1_send('+');	
     UATR1_sendString(hello);
 
     P4_3 = 0;
@@ -57,25 +82,8 @@ void main(void)
     P3M1 |= 0x08;
     P4SW |= 0x10;
     P2M0 |= 0x80;
-    if (P3_3)    UATR1_sendString(hello);
-    //Power GPRS Module
-    P1_1 = 0;
-    TimeDelay(100);
-    P1_1 = 1;
-    //Check
-    bIO10High = 0;
-    n =0;
-    while(!bIO10High)
-    {
-        if (!P3_3) n++;
-	if (n > 4) bIO10High = 1;
 
-    }
-
-    UATR1_sendString(msg);
-    
-    while(!P3_3){};
-    UATR1_sendString(msg); 
+    GPRS_ON();
     
     //UATR2_sendString(ATCMD);
 	//n = UATR2_get();
@@ -83,18 +91,14 @@ void main(void)
     while(1)
     {
 	LED_ON();
-	n = UATR1_get();
-	LED_OFF();
-	if (n) 
+	while(n=UATR1_get())
 	{
-	LED_ON();
 		UATR1_send(n);
+	};
 	LED_OFF();
-        LED_ON();
-	LED_ON();
-		UATR2_send(n);	
-	LED_OFF();
-	}
-	//UATR1_sendString(ATCMD);
+        while(n=UATR1_get())
+	{
+		UATR1_send(n);
+	};
     };
 }
