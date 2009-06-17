@@ -62,7 +62,7 @@ void GPRS_ON()
 
 void main(void)
 {
-    __code unsigned char* hello="\r\nSystem Start...\r\n";
+    __code unsigned char* hello="[1234567890]";
     __code unsigned char* msg="\r\nGPRS Power On";
     __code unsigned char* ATCMD="AT\r\n";
     unsigned char n;
@@ -73,6 +73,7 @@ void main(void)
     TimeDelay(20);
     RUN_LED = 0;
     UATR_init();
+    RUN_LED = 1;
 
     UATR1_send('+');	
     UATR1_sendString(hello);
@@ -83,22 +84,20 @@ void main(void)
     P4SW |= 0x10;
     P2M0 |= 0x80;
 
-    GPRS_ON();
+    //GPRS_ON();
     
     //UATR2_sendString(ATCMD);
 	//n = UATR2_get();
 	//if (n) UATR1_send(n);
+	n=0;
     while(1)
     {
-	LED_ON();
-	while(n=UATR1_get())
+	//TimeDelay(10);
+	//UATR1_sendString(hello);
+	n=UATR1_get();
+	if (n)	
 	{
-		UATR1_send(n);
-	};
-	LED_OFF();
-        while(n=UATR1_get())
-	{
-		UATR1_send(n);
-	};
+	    UATR1_send(n);
+	}
     };
 }
