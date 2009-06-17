@@ -9,7 +9,7 @@ __data volatile unsigned char gRx1In;
 __data volatile unsigned char gRx2In;
 __data volatile unsigned char gRx1Out;
 __data volatile unsigned char gRx2Out;
-__xdata volatile unsigned char gTx1[16];
+__xdata volatile unsigned char gTx1;
 __xdata volatile unsigned char gTx2[16];
 __data volatile unsigned char gTx1In;
 __data volatile unsigned char gTx2In;
@@ -64,13 +64,20 @@ void UATR_init()
 
 void UATR1_send(unsigned char i)
 {
-	while (gTx1Ptr) {};
-	while (((gTx1In+1)&0x0F)==(gTx1Out&0x0F)); 
-	
-	gTx1[(gTx1In&0x0F)]=i;
-	gTx1In++;
-	gTx1Len = 0;
-	if ((gTx1In-1)==gTx1Out) TI = 1;
+	while (gTx1Ptr) {
+	};
+
+	_asm
+	nop
+        nop
+        nop
+	_endasm;
+	ES=0;	
+	gTx1Ptr=&gTx1;
+	gTx1Len = 1;
+	gTx1 = i;
+	ES=1;
+	TI = 1;
 }
 
 void UATR2_send(unsigned char i)
@@ -84,11 +91,26 @@ void UATR2_send(unsigned char i)
 void UATR1_sendString(unsigned char* str)
 {
 	unsigned int i=0;
-	while(gTx1Ptr) {};
 	while(str[i++]); 
+	while(gTx1Ptr) {};
+        _asm
+        nop
+        nop
+        nop
+        _endasm;
+	ES=0;
 	gTx1Ptr = str;
 	gTx1Len = i;
-	if ((gTx1In-1)==gTx1Out) TI = 1;
+	ES=1;
+        _asm
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        _endasm;
+	TI = 1;
 }
 
 void UATR2_sendString(unsigned char* str)
@@ -115,41 +137,42 @@ unsigned char UATR2_get(void)
 
 void UATR1_ISR(void) __interrupt (4)
 {
-
+     
 	unsigned char i;
-	char n=16;
+	char n=15;
 	ES = 0;
 	if (RI)
 	{
 		RI = 0;
 		i = SBUF;
-		bRx1Overflow |= (bRx1Full && gRx1In==gRx1Out)?1:0;
-		gRx1Buf[gRx1In & 0x0F] = i;
-		gRx1In++;
-		bRx1Full = (gRx1In==gRx1Out)?1:0;
+		if (!(bRx1Full && gRx1In==gRx1Out))
+		{
+			gRx1Buf[gRx1In & 0x0F] = i;
+			gRx1In++;
+			bRx1Full = (gRx1In==gRx1Out)?1:0;
+		}
 	}
 	if (TI)
 	{
 		TI = 0;
-		if (gTx1In == gTx1Out)
+		if (gTx1Len)
 		{
-			//load buffer
-			while (n && gTx1Len) 
-			{
-				gTx1[gTx1In & 0x0F]=*gTx1Ptr;
-		   		gTx1Len--;
-				gTx1Ptr++;
-				gTx1In++;
-				n--;
-			};
-			if (gTx1Len==0) gTx1Ptr = 0;
+			gTx1Len--;
+			_asm
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			_endasm;
+			SBUF = *gTx1Ptr; 
+			gTx1Ptr++;
 		}
-		if (gTx1In != gTx1Out)
+		else
 		{
-			SBUF = gTx1[gTx1Out & 0x0F]; 
-			gTx1Out++;
+			gTx1Ptr=0;
 		}
-		
 	}
 	ES = 1;
 }
